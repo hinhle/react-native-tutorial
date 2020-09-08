@@ -15,15 +15,21 @@
     "react": "~16.11.0",
     "react-dom": "~16.11.0",
     "react-native": "~0.62.2",
+    "react-native-button": "^3.0.1",
     "react-native-gesture-handler": "~1.6.1",
+    "react-native-modalbox": "^2.0.0",
     "react-native-reanimated": "~1.9.0",
     "react-native-screens": "~2.9.0",
+    "react-native-swipeout": "^2.3.6",
     "react-native-unimodules": "~0.10.1",
     "react-native-web": "~0.11.7"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",
+    "babel-cli": "^6.26.0",
     "babel-jest": "~25.2.6",
+    "babel-preset-flow": "^6.23.0",
+    "flow-bin": "^0.133.0",
     "jest": "~25.2.6",
     "react-test-renderer": "~16.11.0"
   },
