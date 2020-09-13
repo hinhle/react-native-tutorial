@@ -1,10 +1,17 @@
 import React, { Component } from "react";
-import { View, Text, FlatList, StyleSheet, Alert } from "react-native";
-import flatListData from "../data/flatListData";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  Alert,
+  RefreshControl,
+} from "react-native";
 import Swipeout from "react-native-swipeout";
-import AddModal from "./AddModal";
+import AddModalWithAPI from "./AddModalWithAPI";
 import EditModal from "./EditModal";
 import Button from "react-native-button";
+import { getEmployeesFromServer } from "../networking/Server";
 
 class FlatListItem extends Component {
   constructor(props) {
@@ -17,7 +24,7 @@ class FlatListItem extends Component {
   refreshFlatListItem = (activeKey) => {
     this.setState((prevState) => {
       return {
-        numberOfRefresh: prevState.numberOfRefresh + 1
+        numberOfRefresh: prevState.numberOfRefresh + 1,
       };
     });
   };
@@ -26,14 +33,17 @@ class FlatListItem extends Component {
       autoClose: true,
       onClose: (secID, rowID, direction) => {},
       onOpen: (secID, rowID, direction) => {
-        this.setState({ activeRowKey: this.props.item.key });
+        this.setState({ activeRowKey: this.props.item.id });
       },
       right: [
         {
           onPress: () => {
-            this.props.parentFlatList.refs.editModal.showEditModal(flatListData[this.props.index], this);
+            this.props.parentFlatList.refs.editModal.showEditModal(
+              " flatListData[this.props.index]",
+              this
+            );
           },
-           text: "Edit",
+          text: "Edit",
           type: "primary",
         },
         {
@@ -52,13 +62,13 @@ class FlatListItem extends Component {
                 {
                   text: "Yes",
                   onPress: () => {
-                    console.log(flatListData);
-                    console.log("index", this.props.index);
-                    flatListData.splice(this.props.index, 1);
-                    console.log(flatListData);
-                    //Refresh flat list
-                    console.log("yes button", deletingRow);
-                    this.props.parentFlatList.refreshFlatList(deletingRow);
+                    // console.log(flatListData);
+                    // console.log("index", this.props.index);
+                    // flatListData.splice(this.props.index, 1);
+                    // console.log(flatListData);
+                    // //Refresh flat list
+                    // console.log("yes button", deletingRow);
+                    // this.props.parentFlatList.refreshFlatList(deletingRow);
                   },
                 },
               ],
@@ -80,8 +90,12 @@ class FlatListItem extends Component {
             backgroundColor: this.props.index % 2 == 0 ? "red" : "green",
           }}
         >
-          <Text style={styles.flatListItem}>{this.props.item.name}</Text>
-          <Text style={styles.flatListItem}>{this.props.item.origin}</Text>
+          <Text style={styles.flatListItem}>
+            {this.props.item.employee_name}
+          </Text>
+          <Text style={styles.flatListItem}>
+            {this.props.item.employee_age}
+          </Text>
         </View>
       </Swipeout>
     );
@@ -94,13 +108,34 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-export default class BasicFlatList extends Component {
+export default class FlatListWithAPI extends Component {
   constructor(props) {
     super(props);
     this.state = {
       deletedRowKey: null,
+      refreshing: false,
+      employeesFromServer: [],
     };
     this._onPressAdd = this._onPressAdd.bind(this);
+  }
+  onRefresh = () => {
+    this.refreshDataFromServer();
+  };
+  refreshDataFromServer = () => {
+    this.setState({ refreshing: true });
+    getEmployeesFromServer()
+      .then((employees) => {
+        this.setState({ employeesFromServer: employees });
+        this.setState({ refreshing: true });
+      })
+      .catch((error) => {
+        this.setState({ employeesFromServer: [] });
+        this.setState({ refreshing: true });
+      });
+  };
+  componentDidMount() {
+    this.refreshDataFromServer();
+    console.log(this.state.employeesFromServer.toString());
   }
   refreshFlatList = (activeKey) => {
     console.log("flat list component", this.state.deletedRowKey);
@@ -132,7 +167,8 @@ export default class BasicFlatList extends Component {
 
         <FlatList
           ref={"flatList"}
-          data={flatListData}
+          /*data={flatListData}*/
+          data={this.state.employeesFromServer}
           renderItem={({ item, index }) => {
             return (
               <FlatListItem
@@ -142,9 +178,19 @@ export default class BasicFlatList extends Component {
               ></FlatListItem>
             );
           }}
+          keyExtractor={(item, index) => item.id}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this.onRefresh}
+            ></RefreshControl>
+          }
         ></FlatList>
-        <AddModal ref={"addModal"} parentFlatList={this}></AddModal>
-        <EditModal ref={'editModal'} parentFlatList={this}></EditModal>
+        <AddModalWithAPI
+          ref={"addModal"}
+          parentFlatList={this}
+        ></AddModalWithAPI>
+        <EditModal ref={"editModal"} parentFlatList={this}></EditModal>
       </View>
     );
   }

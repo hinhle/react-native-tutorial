@@ -1,26 +1,26 @@
 var flatListData = [
   {
-    key: 1,
+    key: "1",
     name: "Soup",
     origin: "Vietnam",
   },
   {
-    key: 2,
+    key: "2",
     name: "Bread",
     origin: "America",
   },
   {
-    key: 3,
+    key: "3",
     name: "Pizza",
     origin: "Italy",
   },
   {
-    key: 4,
+    key: "4",
     name: "Hamburger",
     origin: "British",
   },
   {
-    key: 5,
+    key: "5",
     name: "Pasta",
     origin: "China",
   },

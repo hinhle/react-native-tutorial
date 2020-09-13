@@ -2,15 +2,15 @@ import React, { Component } from "react";
 import { View, Text, Platform, Dimensions, TextInput } from "react-native";
 import Button from "react-native-button";
 import Modal from "react-native-modalbox";
-import flatListData from "../data/flatListData";
-
+import { insertNewEmployeeToServer } from "../networking/Server";
 var screen = Dimensions.get("window");
-export default class AddModal extends Component {
+export default class AddModalWithAPI extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      newFoodName: "",
-      newFoodOrigin: "",
+      newEmployeeName: "",
+      newEmployeeSalary: "2000000",
+      newEmployeeAge: "",
     };
   }
   showAddModal = () => {
@@ -45,7 +45,7 @@ export default class AddModal extends Component {
             marginTop: 40,
           }}
         >
-          New food information
+          New employee information
         </Text>
         <TextInput
           style={{
@@ -57,9 +57,9 @@ export default class AddModal extends Component {
             marginBottom: 5,
             borderBottomWidth: 1,
           }}
-          placeholder="Enter new food's name"
-          onChangeText={(text) => this.setState({ newFoodName: text })}
-          value={this.state.newFoodName}
+          placeholder="Enter new employee's name"
+          onChangeText={(text) => this.setState({ newEmployeeName: text })}
+          value={this.state.newEmployeeName}
         ></TextInput>
         <TextInput
           style={{
@@ -71,9 +71,9 @@ export default class AddModal extends Component {
             marginBottom: 5,
             borderBottomWidth: 1,
           }}
-          placeholder="Enter new food's description"
-          onChangeText={(text) => this.setState({ newFoodOrigin: text })}
-          value={this.state.newFoodOrigin}
+          placeholder="Enter new employee's age"
+          onChangeText={(text) => this.setState({ newEmployeeAge: text })}
+          value={this.state.newEmployeeAge}
         ></TextInput>
         <Button
           style={{
@@ -91,20 +91,26 @@ export default class AddModal extends Component {
           }}
           onPress={() => {
             if (
-              this.state.newFoodName.length == 0 ||
-              this.state.newFoodOrigin.length == 0
+              this.state.newEmployeeName.length == 0 ||
+              this.state.newEmployeeAge.length == 0
             ) {
-              alert("You must enter food's name and origin");
+              alert("You must enter employee's name and age");
               return;
             }
             const newKey = this.generateKey(24);
-            const newFood = {
-              key: newKey,
-              name: this.state.newFoodName,
-              origin: this.state.newFoodOrigin,
+            const newEmployee = {
+              name: this.state.newEmployeeName,
+              salary: this.state.newEmployeeSalary,
+              age: this.state.newEmployeeAge,
             };
-            flatListData.push(newFood);
-            this.props.parentFlatList.refreshFlatList(newKey);
+            // flatListData.push(newFood);
+            // this.props.parentFlatList.refreshFlatList(newKey);
+            insertNewEmployeeToServer(newEmployee).then((result) => {
+              if (result === "success") {
+                this.props.parentFlatList.refreshDataFromServer();
+                console.log("success");
+              }
+            });
             this.refs.myModal.close();
           }}
         >
