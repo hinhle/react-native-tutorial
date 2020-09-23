@@ -5,6 +5,7 @@ import * as AuthSession from "expo-auth-session";
 
 // The github auth callback should be something like: https://auth.expo.io/@bacon/github
 const REDIRECT_URL = AuthSession.getRedirectUrl();
+console.log("url: ", REDIRECT_URL);
 // const REDIRECT_URL =
 //   "https://auth.expo.io/@hinhle/tutorialproject-e3ab752b-e5e3-4f39-8d4d-3829e51016e4";
 // Add your API stuff here...

@@ -53,6 +53,17 @@ async function signOutAsync() {
   }
 }
 
+async function onPressButton() {
+  const { credential } = await signInAsync();
+  console.log("return", credential);
+  const { accessToken } = credential;
+  console.log("accessToken", accessToken);
+  const data = await axios.post(`${API_URL}/github/langs`, {
+    accessToken,
+  });
+  console.log("RESPONSE FROM API", data);
+}
+
 async function attemptToRestoreAuthAsync() {
   let token = await AsyncStorage.getItem(GithubStorageKey);
   if (token) {
@@ -87,7 +98,8 @@ export default class SignInWithGithub extends Component {
 
   render() {
     if (this.state.isSignedIn) {
-      const user = firebase.auth().currentUser || {};
+      const user = firebase.auth().currentUser;
+      console.log("user", firebase.auth().currentUser);
 
       return (
         <View style={styles.container}>
@@ -101,18 +113,7 @@ export default class SignInWithGithub extends Component {
     }
     return (
       <View style={styles.container}>
-        <GithubButton
-          onPress={() => {
-            signInAsync().then((userCredential) => {
-              console.log("return", userCredential);
-            });
-            // const { accessToken } = credential;
-            // const { data } = axios.post(`${API_URL}/github/langs`, {
-            //   accessToken,
-            // });
-            // console.log("RESPONSE FROM API", data);
-          }}
-        />
+        <GithubButton onPress={() => onPressButton()} />
       </View>
     );
   }
