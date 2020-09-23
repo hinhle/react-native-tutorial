@@ -17,5 +17,6 @@ import { registerRootComponent } from "expo";
 //import TouchCpn from "./components/TouchCpn";
 //import BasicFlatList from "./components/BasicFlatList";
 //import BasicSectionList from "./components/BasicSectionList";
-import FlatListWithAPI from "./components/FlatListWithAPI";
-registerRootComponent(FlatListWithAPI);
+//import FlatListWithAPI from "./components/FlatListWithAPI";
+import SignInWithGithub from "./components/SignInWithGithub";
+registerRootComponent(SignInWithGithub);
